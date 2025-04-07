@@ -20,7 +20,11 @@ export const createJob = async (data, userId) => {
             title: job.title,
             description: job.description,
             message: `สร้างงาน "${job.title}"`,
-            scheduledAt: `วันที่ "${job.scheduledAt}"`
+            scheduledAt: `วันที่ "${job.scheduledAt}"`,
+            location: `สถานที่ "${job.location}"`,
+            status: `สถานะ "${job.status}"`,
+            createdBy: `สร้างโดย "${job.createdBy}"`,
+            note: `หมายเหตุ "${job.notes}"`,
         }
     });
 

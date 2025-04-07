@@ -21,7 +21,7 @@ export const getJobItems = async (req, res) => {
 export const addJobItem = async (req, res) => {
     try {
         const { jobId, itemId, quantity } = req.body;
-
+        const userId = req.user.userId;
         if (!jobId || !itemId || !quantity) {
             return res.status(400).json({ error: 'กรุณาระบุข้อมูลให้ครบถ้วน' });
         }
@@ -29,7 +29,8 @@ export const addJobItem = async (req, res) => {
         const jobItem = await jobItemService.addJobItem(
             parseInt(jobId, 10),
             parseInt(itemId, 10),
-            parseInt(quantity, 10)
+            parseInt(quantity, 10),
+            userId
         );
 
         res.status(201).json(jobItem);

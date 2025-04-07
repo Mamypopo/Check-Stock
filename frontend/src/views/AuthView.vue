@@ -32,6 +32,15 @@
         required
       />
       <button class="btn-primary">เข้าสู่ระบบ</button>
+
+      <!-- Google Login Button -->
+      <div class="mt-4">
+        <p class="text-center text-gray-500 mb-2">หรือเข้าสู่ระบบด้วย</p>
+        <button @click.prevent="loginWithGoogle" class="btn-google">
+          <img src="@/assets/images/icons8-google.svg" alt="Google" class="w-5 h-5 mr-2" />
+          เข้าสู่ระบบด้วย Google
+        </button>
+      </div>
     </form>
 
     <!-- Register Form -->
@@ -51,12 +60,21 @@
         <option value="MANAGER">MANAGER</option>
       </select>
       <button class="btn-primary">สมัครสมาชิก</button>
+
+      <!-- Google Register Button -->
+      <div class="mt-4">
+        <p class="text-center text-gray-500 mb-2">หรือสมัครสมาชิกด้วย</p>
+        <button @click.prevent="loginWithGoogle" class="btn-google">
+          <img src="@/assets/images/icons8-google.svg" alt="Google" class="w-5 h-5 mr-2" />
+          สมัครสมาชิกด้วย Google
+        </button>
+      </div>
     </form>
   </div>
 </template>
 
 <script>
-import { login, register } from '../services/auth.js'
+import { login, register, getGoogleAuthUrl } from '../services/auth.js'
 import Swal from 'sweetalert2'
 
 export default {
@@ -74,6 +92,24 @@ export default {
         password: '',
         role: 'STAFF',
       },
+    }
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get('token')
+
+    if (token) {
+      localStorage.setItem('token', token)
+
+      Swal.fire({
+        icon: 'success',
+        title: 'เข้าสู่ระบบสำเร็จ',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      })
+
+      this.$router.push('/')
     }
   },
   methods: {
@@ -137,6 +173,10 @@ export default {
         })
       }
     },
+
+    loginWithGoogle() {
+      window.location.href = getGoogleAuthUrl()
+    },
   },
 }
 </script>
@@ -147,5 +187,8 @@ export default {
 }
 .btn-primary {
   @apply w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition;
+}
+.btn-google {
+  @apply w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 py-2 rounded hover:bg-gray-50 transition;
 }
 </style>

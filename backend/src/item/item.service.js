@@ -60,7 +60,6 @@ export const createItem = async (data, userId) => {
             category: newItem.category?.name,
             unit: newItem.Unit?.name,
             isConsumable: newItem.isConsumable,
-            message: `สร้างสิ่งของใหม่: ${newItem.name} (${newItem.code})`
         }
     });
 

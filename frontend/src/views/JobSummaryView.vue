@@ -146,7 +146,7 @@
                     <div v-if="item.note" class="flex items-center">
                       <button
                         @click="openNoteModal(item)"
-                        class="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-100 transition-colors"
+                        class="text-blue-600 hover:text-blue-800 p-1 rounded-md hover:bg-blue-100 transition-colors"
                         title="ดูหมายเหตุ"
                       >
                         <DocumentTextIcon class="h-5 w-5" />

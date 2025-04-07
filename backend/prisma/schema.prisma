@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String?
   name      String
-  role      UserRole @default(STAFF)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isDelete  Boolean  @default(false)
-
+  role      UserRole   @default(STAFF)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  isDelete  Boolean    @default(false)
+  googleId  String?    @unique
   jobs      Job[]      @relation("CreatedJobs")
   checkouts Checkout[] // เบิกของ
   checkins  Checkin[] // คืนของ

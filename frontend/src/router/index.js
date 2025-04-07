@@ -10,6 +10,8 @@ import JobDetailView from '@/views/JobDetailView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import CheckinView from '@/views/CheckinView.vue'
 import JobSummaryView from '@/views/JobSummaryView.vue'
+import LogsView from '@/views/LogsView.vue'
+
 const routes = [
   {
     path: '/',
@@ -36,6 +38,11 @@ const routes = [
         name: 'JobSummary',
         component: JobSummaryView,
       },
+      {
+        path: '/logs',
+        name: 'logs',
+        component: LogsView,
+      },
     ]
   },
   {
@@ -45,7 +52,11 @@ const routes = [
       { path: 'auth', name: 'auth', component: AuthView }
     ]
   },
-
+  {
+    path: '/auth/oauth-callback',
+    name: 'OAuthCallback',
+    component: () => import('../views/AuthView.vue')
+  },
 ]
 
 const router = createRouter({

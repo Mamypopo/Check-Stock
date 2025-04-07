@@ -84,6 +84,12 @@ export const createCheckout = async (jobId, items, userId) => {
                 itemCount: items.length,
                 message: `เช็คของออกสำหรับงาน "${job.title}" จำนวน ${items.length} รายการ`,
                 checkoutBy: user?.name || 'ไม่ระบุ',
+                items: checkout.items.map(item => ({
+                    name: item.item.name,
+                    quantity: item.quantity,
+                    actualQuantity: item.actualQuantity,
+                    unit: item.item.Unit?.name || 'หน่วย',
+                }))
             }
         });
 

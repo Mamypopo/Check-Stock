@@ -20,10 +20,15 @@ export const register = async ({ email, password, name, role }) => {
     })
 
     await logAction({
-        action: 'register',
+        action: 'REGISTER',
         userId: user.id,
         targetType: 'user',
-        targetId: user.id
+        targetId: user.id,
+        details: {
+            email: user.email,
+            name: user.name,
+            role: user.role,
+        }
     })
 
     return {
@@ -46,7 +51,7 @@ export const login = async ({ email, password }) => {
     )
 
     await logAction({
-        action: 'login',
+        action: 'LOGIN',
         userId: user.id,
         targetType: 'User',
         targetId: user.id,

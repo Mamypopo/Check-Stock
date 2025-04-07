@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDelete  Boolean  @default(false)
+
+  jobs      Job[]      @relation("CreatedJobs")
+  checkouts Checkout[] // เบิกของ
+  checkins  Checkin[] // คืนของ
+  logs      Log[]
+
+  itemsCreated Item[] @relation("UserCreatedItem")
+  itemsUpdated Item[] @relation("UserUpdatedItem")
+
+  createdCheckouts Checkout[] @relation("UserCreatedCheckout")
+  updatedCheckouts Checkout[] @relation("UserUpdatedCheckout")
+
+  createdCheckins Checkin[]  @relation("UserCreatedCheckin")
+  updatedCheckins Checkin[]  @relation("UserUpdatedCheckin")
+  Category        Category[]
+  Unit            Unit[]
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  MANAGER
+}
+
+model Item {
+  id           Int       @id @default(autoincrement())
+  code         String?   @unique
+  name         String
+  description  String?
+  isConsumable Boolean   @default(false)
+  stock        Int       @default(0)
+  isDelete     Boolean   @default(false)
+  deletedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy     Int?
+  createdByUser User? @relation("UserCreatedItem", fields: [createdBy], references: [id])
+  updatedBy     Int?
+  updatedByUser User? @relation("UserUpdatedItem", fields: [updatedBy], references: [id])
+
+  jobItems   JobItem[]
+  checkouts  CheckoutItem[]
+  checkins   CheckinItem[]
+  category   Category?      @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  Unit       Unit?          @relation(fields: [unitId], references: [id])
+  unitId     Int?
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items     Item[]
+  createdBy Int?
+  user      User?    @relation(fields: [createdBy], references: [id])
+}
+
+model Unit {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items     Item[]
+  createdBy Int?
+  user      User?  @relation(fields: [createdBy], references: [id])
+}
+
+model Job {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  location    String?
+  status      String    @default("PENDING")
+  scheduledAt DateTime?
+  notes       String?
+  isDelete    Boolean   @default(false)
+  deletedAt   DateTime?
+  createdBy   Int?
+  creator     User?     @relation("CreatedJobs", fields: [createdBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  jobItems  JobItem[]
+  checkouts Checkout[]
+  checkins  Checkin[]
+  logs      Log[]
+}
+
+model JobItem {
+  id       Int @id @default(autoincrement())
+  jobId    Int
+  itemId   Int
+  quantity Int
+
+  job  Job  @relation(fields: [jobId], references: [id])
+  item Item @relation(fields: [itemId], references: [id])
+
+  @@unique([jobId, itemId])
+}
+
+model Checkout {
+  id        Int      @id @default(autoincrement())
+  jobId     Int
+  userId    Int
+  createdAt DateTime @default(now())
+  createdBy Int?
+  creator   User?    @relation("UserCreatedCheckout", fields: [createdBy], references: [id])
+  updatedBy Int?
+  updater   User?    @relation("UserUpdatedCheckout", fields: [updatedBy], references: [id])
+  job       Job      @relation(fields: [jobId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  items CheckoutItem[]
+}
+
+model CheckoutItem {
+  id             Int  @id @default(autoincrement())
+  checkoutId     Int
+  itemId         Int
+  quantity       Int
+  actualQuantity Int?
+
+  checkout Checkout @relation(fields: [checkoutId], references: [id])
+  item     Item     @relation(fields: [itemId], references: [id])
+}
+
+model Checkin {
+  id        Int      @id @default(autoincrement())
+  jobId     Int
+  userId    Int
+  createdAt DateTime @default(now())
+  createdBy Int?
+  creator   User?    @relation("UserCreatedCheckin", fields: [createdBy], references: [id])
+  updatedBy Int?
+  updater   User?    @relation("UserUpdatedCheckin", fields: [updatedBy], references: [id])
+  job       Job      @relation(fields: [jobId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  items CheckinItem[]
+}
+
+model CheckinItem {
+  id             Int      @id @default(autoincrement())
+  checkinId      Int
+  itemId         Int
+  quantity       Int
+  actualQuantity Int
+  note           String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  checkin Checkin @relation(fields: [checkinId], references: [id])
+  item    Item    @relation(fields: [itemId], references: [id])
+
+  @@index([checkinId])
+  @@index([itemId])
+}
+
+model Log {
+  id         Int      @id @default(autoincrement())
+  action     String
+  userId     Int?
+  jobId      Int?
+  targetType String? // เช่น: "Item", "Job", "Checkout"
+  targetId   Int? // ID ของ entity ที่ถูกกระทำ
+  details    Json?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+  job  Job?  @relation(fields: [jobId], references: [id])
+}

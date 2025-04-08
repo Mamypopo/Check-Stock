@@ -36,7 +36,7 @@
       <!-- Google Login Button -->
       <div class="mt-4">
         <p class="text-center text-gray-500 mb-2">หรือเข้าสู่ระบบด้วย</p>
-        <button @click.prevent="loginWithGoogle" class="btn-google">
+        <button @click.prevent="loginWithGoogle()" class="btn-google">
           <img src="@/assets/images/icons8-google.svg" alt="Google" class="w-5 h-5 mr-2" />
           เข้าสู่ระบบด้วย Google
         </button>
@@ -55,16 +55,34 @@
         required
       />
       <select v-model="registerForm.role" class="input" required>
-        <option value="STAFF">STAFF</option>
-        <option value="ADMIN">ADMIN</option>
-        <option value="MANAGER">MANAGER</option>
+        <option value="">เลือกบทบาท</option>
+        <option value="STAFF">พนักงาน</option>
+        <option value="ADMIN">แอดมิน</option>
       </select>
+
+      <input
+        v-if="registerForm.role === 'ADMIN'"
+        v-model="registerForm.adminCode"
+        type="text"
+        placeholder="รหัสแอดมิน"
+        class="input"
+        required
+      />
+      <input
+        v-if="registerForm.role === 'STAFF'"
+        v-model="registerForm.staffCode"
+        type="text"
+        placeholder="รหัสพนักงาน"
+        class="input"
+        required
+      />
+
       <button class="btn-primary">สมัครสมาชิก</button>
 
       <!-- Google Register Button -->
       <div class="mt-4">
         <p class="text-center text-gray-500 mb-2">หรือสมัครสมาชิกด้วย</p>
-        <button @click.prevent="loginWithGoogle" class="btn-google">
+        <button @click.prevent="registerWithGoogle()" class="btn-google">
           <img src="@/assets/images/icons8-google.svg" alt="Google" class="w-5 h-5 mr-2" />
           สมัครสมาชิกด้วย Google
         </button>
@@ -90,7 +108,9 @@ export default {
         name: '',
         email: '',
         password: '',
-        role: 'STAFF',
+        role: '',
+        adminCode: '',
+        staffCode: '',
       },
     }
   },
@@ -113,10 +133,28 @@ export default {
     }
   },
   methods: {
+    resetForms() {
+      this.loginForm = {
+        email: '',
+        password: '',
+      }
+      this.registerForm = {
+        name: '',
+        email: '',
+        password: '',
+        role: '',
+        adminCode: '',
+        staffCode: '',
+      }
+    },
+
     async handleLogin() {
       try {
         const res = await login(this.loginForm)
         localStorage.setItem('token', res.token)
+
+        // ล้างค่าฟอร์มหลังจากล็อกอินสำเร็จ
+        this.resetForms()
 
         Swal.fire({
           icon: 'success',
@@ -153,6 +191,9 @@ export default {
       try {
         await register(this.registerForm)
 
+        // ล้างค่าฟอร์มหลังจากสมัครสำเร็จ
+        this.resetForms()
+
         Swal.fire({
           icon: 'success',
           title: 'สมัครสมาชิกสำเร็จ!',
@@ -176,6 +217,16 @@ export default {
 
     loginWithGoogle() {
       window.location.href = getGoogleAuthUrl()
+    },
+
+    registerWithGoogle() {
+      window.location.href = getGoogleAuthUrl()
+    },
+  },
+  watch: {
+    // เมื่อเปลี่ยนแท็บ ให้ล้างค่าฟอร์ม
+    activeTab() {
+      this.resetForms()
     },
   },
 }

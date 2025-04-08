@@ -83,7 +83,9 @@
             หมวดหมู่ที่เลือก: {{ selectedCategory.name }}
           </div>
         </div>
-
+        <p class="text-end mt-2 text-sm text-blue-600">
+          <router-link to="/category-unit-management">สร้างหน่วยหรือหมวดหมู่</router-link>
+        </p>
         <!-- หน่วย -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700">หน่วย</label>

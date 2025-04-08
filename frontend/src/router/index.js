@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainLayout from '../layouts/MainLayout.vue'
 import AuthLayout from '../layouts/AuthLayout.vue'
-import HomeView from '../views/HomeView.vue'
 import AuthView from '../views/AuthView.vue'
 import ItemListView from '@/views/ItemListView.vue'
 import CategoryUnitManagement from '@/views/CategoryUnitManagement.vue'
@@ -17,7 +16,6 @@ const routes = [
     path: '/',
     component: MainLayout,
     children: [
-      { path: '', name: 'home', component: HomeView },
       { path: 'items', name: 'items', component: ItemListView },
       { path: 'category-unit-management', name: 'category-unit-management', component: CategoryUnitManagement },
       { path: 'jobs', name: 'jobs', component: JobListView },

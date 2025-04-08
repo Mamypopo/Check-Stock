@@ -80,6 +80,7 @@ import {
   MapIcon,
   ArrowLeftStartOnRectangleIcon,
   ClockIcon,
+  HomeIcon,
 } from '@heroicons/vue/24/outline'
 
 export default {
@@ -92,6 +93,7 @@ export default {
     MapIcon,
     ArrowLeftStartOnRectangleIcon,
     ClockIcon,
+    HomeIcon,
   },
   props: {
     collapsed: {

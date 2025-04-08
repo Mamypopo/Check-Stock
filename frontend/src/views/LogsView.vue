@@ -450,16 +450,6 @@
                     </p>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-500">จำนวนรายการที่ข้าม</p>
-                    <p class="text-gray-800">
-                      <span
-                        class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800"
-                      >
-                        {{ getLogDetails.skipped || 0 }} รายการ
-                      </span>
-                    </p>
-                  </div>
-                  <div>
                     <p class="text-sm font-medium text-gray-500">จำนวนข้อผิดพลาด</p>
                     <p class="text-gray-800">
                       <span
@@ -502,11 +492,7 @@
 
                     <p class="text-gray-800">
                       นำเข้าข้อมูลสำเร็จ {{ getLogDetails.created || 0 }} รายการ จากทั้งหมด
-                      {{
-                        (getLogDetails.created || 0) +
-                        (getLogDetails.skipped || 0) +
-                        (getLogDetails.errors || 0)
-                      }}
+                      {{ (getLogDetails.created || 0) + (getLogDetails.errors || 0) }}
                       รายการ
                     </p>
                   </div>
@@ -2325,6 +2311,8 @@ export default {
           position: 'top-right',
           timeout: 5000,
           closeOnClick: true,
+          showConfirmButton: true,
+          confirmButtonColor: '#3085d6',
         })
       } finally {
         this.loading = false

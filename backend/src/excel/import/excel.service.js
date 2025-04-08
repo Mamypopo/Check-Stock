@@ -78,6 +78,7 @@ export const importItemsFromExcel = async (items, userId) => {
                 update: {},
                 create: {
                     name,
+                    isDelete: false
                 }
             });
         })
@@ -95,6 +96,7 @@ export const importItemsFromExcel = async (items, userId) => {
                 update: {},
                 create: {
                     name,
+                    isDelete: false
                 }
             });
         })

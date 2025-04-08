@@ -58,13 +58,14 @@ model Item {
   updatedBy     Int?
   updatedByUser User? @relation("UserUpdatedItem", fields: [updatedBy], references: [id])
 
-  jobItems   JobItem[]
-  checkouts  CheckoutItem[]
-  checkins   CheckinItem[]
-  category   Category?      @relation(fields: [categoryId], references: [id])
-  categoryId Int?
-  Unit       Unit?          @relation(fields: [unitId], references: [id])
-  unitId     Int?
+  jobItems         JobItem[]
+  checkouts        CheckoutItem[]
+  checkins         CheckinItem[]
+  category         Category?          @relation(fields: [categoryId], references: [id])
+  categoryId       Int?
+  Unit             Unit?              @relation(fields: [unitId], references: [id])
+  unitId           Int?
+  ItemTemplateItem ItemTemplateItem[]
 }
 
 model Category {
@@ -75,6 +76,7 @@ model Category {
   items     Item[]
   createdBy Int?
   user      User?    @relation(fields: [createdBy], references: [id])
+  isDelete  Boolean  @default(false)
 }
 
 model Unit {
@@ -85,7 +87,8 @@ model Unit {
 
   items     Item[]
   createdBy Int?
-  user      User?  @relation(fields: [createdBy], references: [id])
+  user      User?   @relation(fields: [createdBy], references: [id])
+  isDelete  Boolean @default(false)
 }
 
 model Job {
@@ -192,4 +195,23 @@ model Log {
 
   user User? @relation(fields: [userId], references: [id])
   job  Job?  @relation(fields: [jobId], references: [id])
+}
+
+model ItemTemplate {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items ItemTemplateItem[]
+}
+
+model ItemTemplateItem {
+  id         Int @id @default(autoincrement())
+  templateId Int
+  itemId     Int
+  quantity   Int
+
+  template ItemTemplate @relation(fields: [templateId], references: [id])
+  item     Item         @relation(fields: [itemId], references: [id])
 }

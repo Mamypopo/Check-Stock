@@ -19,6 +19,9 @@ export const createNewItem = async (req, res) => {
         res.status(201).json(newItem);
     } catch (err) {
         console.error('Create item error:', err);
+        if (err.message === 'รหัสสินค้านี้มีอยู่ในระบบแล้ว') {
+            return res.status(400).json({ error: err.message });
+        }
         res.status(500).json({ error: 'Failed to create item' });
     }
 }
@@ -30,6 +33,11 @@ export const updateExistingItem = async (req, res) => {
         res.json(updatedItem);
     } catch (err) {
         console.error('Update item error:', err);
+        if (err.message === 'รหัสสินค้านี้มีอยู่ในระบบแล้ว') {
+            return res.status(400).json({ error: err.message });
+        } else if (err.message === 'ไม่พบสิ่งของที่ต้องการแก้ไข') {
+            return res.status(404).json({ error: err.message });
+        }
         res.status(500).json({ error: 'Failed to update item' });
     }
 }

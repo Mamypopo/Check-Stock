@@ -31,10 +31,27 @@ export const getAllItems = async (page = 1, limit = 10) => {
 }
 
 export const createItem = async (data, userId) => {
+
+    if (data.code) {
+        const normalizedCode = data.code.replace(/\s+/g, '').toLowerCase();
+        const existingItems = await prisma.item.findMany({
+            where: {
+                isDelete: false
+            }
+        });
+        const duplicate = existingItems.find(item =>
+            item.code && item.code.replace(/\s+/g, '').toLowerCase() === normalizedCode
+        );
+
+        if (duplicate) {
+            throw new Error('รหัสสินค้านี้มีอยู่ในระบบแล้ว');
+        }
+    }
+
     const newItem = await prisma.item.create({
         data: {
             name: data.name,
-            code: data.code,
+            code: data.code ? data.code.trim() : null,
             stock: data.stock,
             description: data.description,
             categoryId: data.categoryId,
@@ -79,11 +96,30 @@ export const updateItem = async (id, data, userId) => {
         throw new Error('ไม่พบสิ่งของที่ต้องการแก้ไข');
     }
 
+    if (data.code && (!existingItem.code ||
+        data.code.replace(/\s+/g, '').toLowerCase() !== existingItem.code.replace(/\s+/g, '').toLowerCase())) {
+        const normalizedCode = data.code.replace(/\s+/g, '').toLowerCase();
+        const existingItems = await prisma.item.findMany({
+            where: {
+                isDelete: false,
+                id: { not: parseInt(id) }
+            }
+        });
+        const duplicate = existingItems.find(item =>
+            item.code && item.code.replace(/\s+/g, '').toLowerCase() === normalizedCode
+        );
+
+        if (duplicate) {
+            throw new Error('รหัสสินค้านี้มีอยู่ในระบบแล้ว');
+        }
+    }
+
+
     const updatedItem = await prisma.item.update({
         where: { id: parseInt(id) },
         data: {
             name: data.name,
-            code: data.code,
+            code: data.code ? data.code.trim() : null,
             stock: data.stock,
             description: data.description,
             categoryId: data.categoryId,
@@ -193,7 +229,12 @@ export const createCategory = async (data, userId) => {
 
 export const getCategories = async () => {
     return await prisma.category.findMany({
-        orderBy: { createdAt: 'desc' },
+        where: {
+            isDelete: false
+        },
+        orderBy: {
+            name: 'asc'
+        }
     });
 }
 
@@ -237,8 +278,12 @@ export const deleteCategory = async (id, userId) => {
         throw new Error('ไม่พบหมวดหมู่ที่ต้องการลบ');
     }
 
-    const result = await prisma.category.delete({
-        where: { id: parseInt(id) }
+    const result = await prisma.category.update({
+        where: { id: parseInt(id) },
+        data: {
+            isDelete: true,
+            updatedAt: new Date()
+        }
     });
 
     await logAction({
@@ -289,7 +334,12 @@ export const createUnit = async (data, userId) => {
 
 export const getUnits = async () => {
     return await prisma.unit.findMany({
-        orderBy: { createdAt: 'desc' },
+        where: {
+            isDelete: false
+        },
+        orderBy: {
+            name: 'asc'
+        }
     });
 }
 
@@ -333,8 +383,12 @@ export const deleteUnit = async (id, userId) => {
         throw new Error('ไม่พบหน่วยนับที่ต้องการลบ');
     }
 
-    const result = await prisma.unit.delete({
-        where: { id: parseInt(id) }
+    const result = await prisma.unit.update({
+        where: { id: parseInt(id) },
+        data: {
+            isDelete: true,
+            updatedAt: new Date()
+        }
     });
 
     await logAction({

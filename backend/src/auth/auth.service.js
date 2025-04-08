@@ -4,9 +4,19 @@ import prisma from '../config/database.js'
 import { logAction } from '../utils/logger.js'
 
 
-export const register = async ({ email, password, name, role }) => {
+export const register = async ({ email, password, name, role, adminCode, staffCode }) => {
     const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) throw new Error('อีเมลนี้ถูกใช้งานแล้ว')
+
+    if (role === 'ADMIN') {
+        if (!adminCode || adminCode !== process.env.ADMIN_SECRET_CODE) {
+            throw new Error('รหัสแอดมินไม่ถูกต้อง')
+        }
+    } else if (role === 'STAFF') {
+        if (!staffCode || staffCode !== process.env.STAFF_SECRET_CODE) {
+            throw new Error('รหัสพนักงานไม่ถูกต้อง')
+        }
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10)
 

@@ -53,7 +53,7 @@
             <!-- ปุ่มสรุปงาน -->
             <button
               @click="goToSummary"
-              class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md flex items-center"
+              class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white px-4 py-2 rounded-md flex items-center"
               :class="{ 'opacity-50 cursor-not-allowed': job.status !== 'COMPLETED' }"
               :disabled="job.status !== 'COMPLETED'"
               :title="job.status !== 'COMPLETED' ? 'ต้องเช็คของเข้าก่อนจึงจะดูสรุปได้' : ''"
@@ -100,13 +100,23 @@
             <ArchiveBoxIcon class="h-5 w-5 mr-2" />
             รายการสิ่งของในงาน
           </h2>
-          <button
-            @click="openAddItemModal"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center"
-          >
-            <PlusIcon class="h-5 w-5 mr-1" />
-            เพิ่มสิ่งของ
-          </button>
+          <div class="flex gap-2">
+            <button
+              @click="openTemplateModal"
+              class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md flex items-center"
+            >
+              <DocumentDuplicateIcon class="h-5 w-5 mr-1" />
+              ใช้เทมเพลต
+            </button>
+
+            <button
+              @click="openAddItemModal"
+              class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md flex items-center"
+            >
+              <PlusIcon class="h-5 w-5 mr-1" />
+              เพิ่มสิ่งของ
+            </button>
+          </div>
         </div>
 
         <!-- Job Items Table -->
@@ -334,14 +344,14 @@
                     {{ item.Unit?.name || 'ไม่มีหน่วย' }}
                   </div>
                 </div>
-                <div
+                <!-- <div
                   :class="{
                     'text-green-500': item.stock > 0,
                     'text-red-500': item.stock <= 0,
                   }"
                 >
                   คงเหลือ: {{ item.stock || 0 }}
-                </div>
+                </div> -->
               </div>
 
               <!-- แสดงเมื่อไม่พบสิ่งของ -->
@@ -368,7 +378,7 @@
           <p class="text-gray-700">
             <span class="font-semibold">หน่วย:</span> {{ selectedItem.Unit?.name || '-' }}
           </p>
-          <p class="text-gray-700">
+          <!-- <p class="text-gray-700">
             <span class="font-semibold">คงเหลือในคลัง:</span>
             <span
               :class="{
@@ -385,7 +395,7 @@
           >
             <ExclamationTriangleIcon class="h-4 w-4 mr-1" />
             จำนวนในคลังไม่เพียงพอ
-          </p>
+          </p> -->
         </div>
 
         <div class="mb-4">
@@ -410,10 +420,60 @@
           <button
             @click="saveItem"
             class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md flex items-center"
-            :disabled="!isFormValid || !hasEnoughStock"
+            :disabled="!isFormValid"
           >
             <CheckIcon class="h-5 w-5 mr-1" />
             บันทึก
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template Modal -->
+    <div
+      v-if="showTemplateModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+        <h2 class="text-xl font-bold mb-4">เลือกเทมเพลตสิ่งของ</h2>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">เทมเพลต</label>
+          <select
+            v-model="selectedTemplateId"
+            class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            <option value="" disabled>-- เลือกเทมเพลต --</option>
+            <option v-for="template in templates" :key="template.id" :value="template.id">
+              {{ template.name }}
+            </option>
+          </select>
+        </div>
+
+        <div v-if="selectedTemplateId && selectedTemplate" class="mb-4 p-3 bg-gray-50 rounded-md">
+          <h3 class="font-medium mb-2">รายการสิ่งของในเทมเพลต</h3>
+          <ul class="list-disc pl-5 text-sm">
+            <li v-for="item in selectedTemplate.items" :key="item.id" class="mb-1">
+              {{ item.item.name }} - {{ item.quantity }} {{ item.item.Unit?.name || 'หน่วย' }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="flex justify-end">
+          <button
+            @click="closeTemplateModal"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md mr-2 flex items-center"
+          >
+            <XMarkIcon class="h-5 w-5 mr-1" />
+            ยกเลิก
+          </button>
+          <button
+            @click="applyTemplate"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md flex items-center"
+            :disabled="!selectedTemplateId"
+          >
+            <CheckIcon class="h-5 w-5 mr-1" />
+            ใช้เทมเพลต
           </button>
         </div>
       </div>
@@ -424,7 +484,14 @@
 <script>
 import { fetchJobById } from '@/services/job'
 import { searchItemsForDropdown } from '@/services/item'
-import { getJobItems, addJobItem, updateJobItem, deleteJobItem } from '@/services/jobItem'
+import {
+  getJobItems,
+  addJobItem,
+  updateJobItem,
+  deleteJobItem,
+  addItemsFromTemplate,
+} from '@/services/jobItem'
+import { getItemTemplates, getItemTemplateById } from '@/services/itemTemplate'
 import Swal from 'sweetalert2'
 import {
   ArrowLeftIcon,
@@ -441,6 +508,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   ArrowPathIcon,
+  DocumentDuplicateIcon,
 } from '@heroicons/vue/24/outline'
 
 export default {
@@ -460,6 +528,7 @@ export default {
     ChevronDownIcon,
     ChevronUpIcon,
     ArrowPathIcon,
+    DocumentDuplicateIcon,
   },
   data() {
     return {
@@ -479,6 +548,12 @@ export default {
       filteredItems: [],
       highlightedIndex: 0,
       isLoadingItems: false,
+
+      showTemplateModal: false,
+      templates: [],
+      selectedTemplateId: '',
+      selectedTemplate: null,
+      isLoadingTemplates: false,
     }
   },
   computed: {
@@ -489,10 +564,10 @@ export default {
         return this.selectedItem && this.itemQuantity > 0
       }
     },
-    hasEnoughStock() {
-      if (!this.selectedItem) return true
-      return this.selectedItem.stock >= this.itemQuantity
-    },
+    // hasEnoughStock() {
+    //   if (!this.selectedItem) return true
+    //   return this.selectedItem.stock >= this.itemQuantity
+    // },
     canCheckout() {
       return this.job.status === 'PENDING'
     },
@@ -508,6 +583,7 @@ export default {
       await this.loadJobData()
       await this.loadJobItems()
       await this.loadInitialItems()
+      await this.loadTemplates()
     } catch (error) {
       console.error('Error loading job details:', error)
       this.showErrorToast('ไม่สามารถโหลดข้อมูลงานได้')
@@ -816,6 +892,104 @@ export default {
       if (this.showItemDropdown && !this.isLoadingItems) {
         this.loadInitialItems()
       }
+    },
+
+    async loadTemplates() {
+      try {
+        this.isLoadingTemplates = true
+        const response = await getItemTemplates()
+        if (response && response.data) {
+          this.templates = response.data
+        }
+      } catch (error) {
+        console.error('Error loading templates:', error)
+        this.showErrorToast('ไม่สามารถโหลดข้อมูลเทมเพลตได้')
+      } finally {
+        this.isLoadingTemplates = false
+      }
+    },
+
+    async openTemplateModal() {
+      this.showTemplateModal = true
+      if (this.templates.length === 0) {
+        await this.loadTemplates()
+      }
+    },
+
+    closeTemplateModal() {
+      this.showTemplateModal = false
+      this.selectedTemplateId = ''
+      this.selectedTemplate = null
+    },
+
+    async watchSelectedTemplate() {
+      if (this.selectedTemplateId) {
+        try {
+          const response = await getItemTemplateById(this.selectedTemplateId)
+          this.selectedTemplate = response.data
+        } catch (error) {
+          console.error('Error loading template details:', error)
+          this.showErrorToast('ไม่สามารถโหลดรายละเอียดเทมเพลตได้')
+        }
+      } else {
+        this.selectedTemplate = null
+      }
+    },
+
+    async applyTemplate() {
+      if (!this.selectedTemplateId) {
+        this.showErrorToast('กรุณาเลือกเทมเพลต')
+        return
+      }
+
+      try {
+        const confirm = await Swal.fire({
+          title: 'ยืนยันการใช้เทมเพลต',
+          text: 'คุณต้องการเพิ่มรายการสิ่งของจากเทมเพลตนี้ใช่หรือไม่?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'ใช่, เพิ่มเลย!',
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonColor: '#10B981',
+          cancelButtonColor: '#d33',
+        })
+
+        if (!confirm.isConfirmed) return
+
+        await addItemsFromTemplate({
+          jobId: this.job.id,
+          templateId: this.selectedTemplateId,
+        })
+
+        this.closeTemplateModal()
+        await this.loadJobItems()
+
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'เพิ่มรายการสิ่งของจากเทมเพลตสำเร็จ',
+          showConfirmButton: false,
+          timer: 3000,
+        })
+      } catch (error) {
+        console.error('Error applying template:', error)
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'ไม่สามารถเพิ่มรายการสิ่งของจากเทมเพลตได้',
+          text: error.response?.data?.error || 'เกิดข้อผิดพลาดบางอย่าง',
+          showConfirmButton: false,
+          timer: 3000,
+        })
+      }
+    },
+  },
+  watch: {
+    selectedTemplateId: {
+      handler: 'watchSelectedTemplate',
+      immediate: true,
     },
   },
 }

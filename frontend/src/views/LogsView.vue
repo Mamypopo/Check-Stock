@@ -2142,6 +2142,147 @@
               </div>
               <div v-else class="text-gray-500 italic">ไม่มีข้อมูลเพิ่มเติม</div>
             </div>
+
+            <div
+              v-if="
+                selectedLog.action === 'CREATE_ITEM_TEMPLATE' ||
+                selectedLog.action === 'UPDATE_ITEM_TEMPLATE'
+              "
+            >
+              <div class="mb-3">
+                <p class="font-medium">{{ getLogDetails.message }}</p>
+              </div>
+
+              <div
+                class="bg-gray-50 p-3 rounded-md mb-3 flex flex-col sm:flex-row sm:justify-between sm:items-center"
+              >
+                <div class="mb-2 sm:mb-0">
+                  <span class="text-sm text-gray-500">ชื่อเทมเพลต:</span>
+                  <span class="ml-1 font-medium">{{ getLogDetails.templateName }}</span>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">จำนวนรายการ:</span>
+                  <span class="ml-1 font-medium">{{ getLogDetails.itemCount }} รายการ</span>
+                </div>
+              </div>
+
+              <div class="overflow-x-auto bg-white border border-gray-200 rounded-md">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        ลำดับ
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        รหัส
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        ชื่อสิ่งของ
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        จำนวน
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr
+                      v-for="(item, index) in getLogDetails.items"
+                      :key="index"
+                      class="hover:bg-gray-50"
+                    >
+                      <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                        {{ index + 1 }}
+                      </td>
+                      <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                        {{ item.code }}
+                      </td>
+                      <td class="px-3 py-2 text-sm text-gray-900">
+                        <div class="truncate max-w-xs">{{ item.name }}</div>
+                      </td>
+                      <td
+                        class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 text-right font-medium"
+                      >
+                        {{ item.quantity }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!--  DELETE_ITEM_TEMPLATE -->
+            <div v-else-if="selectedLog.action === 'DELETE_ITEM_TEMPLATE'">
+              <div class="mb-3">
+                <p class="font-medium">{{ getLogDetails.message }}</p>
+              </div>
+
+              <div class="bg-gray-50 p-3 rounded-md">
+                <div class="flex items-center">
+                  <ExclamationTriangleIcon class="h-5 w-5 text-red-500 mr-2" />
+                  <span class="text-sm text-gray-700"
+                    >ชื่อเทมเพลต:
+                    <span class="font-medium">{{ getLogDetails.templateName }}</span></span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div v-if="selectedLog.action === 'APPLY_TEMPLATE'" class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-medium text-gray-700 mb-2">ข้อมูลการนำเทมเพลตมาใช้</h4>
+              <div v-if="getLogDetails">
+                <div
+                  v-if="getLogDetails.message"
+                  class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-200"
+                >
+                  <p class="text-blue-800">{{ getLogDetails.message }}</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4">
+                  <div class="bg-white p-3 rounded-md border border-gray-200">
+                    <p class="text-sm font-medium text-gray-500 mb-2">ชื่อเทมเพลต</p>
+                    <p class="text-gray-800 font-medium">
+                      {{ getLogDetails.templateName || 'ไม่ระบุ' }}
+                    </p>
+                  </div>
+
+                  <div
+                    v-if="getLogDetails.itemCount !== undefined"
+                    class="bg-white p-3 rounded-md border border-gray-200"
+                  >
+                    <p class="text-sm font-medium text-gray-500 mb-2">จำนวนรายการ</p>
+                    <p class="text-gray-800 font-medium">{{ getLogDetails.itemCount }} รายการ</p>
+                  </div>
+
+                  <div
+                    v-if="getLogDetails.jobTitle"
+                    class="bg-white p-3 rounded-md border border-gray-200"
+                  >
+                    <p class="text-sm font-medium text-gray-500 mb-2">งานที่นำไปใช้</p>
+                    <p class="text-gray-800 font-medium">{{ getLogDetails.jobTitle }}</p>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                  <div class="flex items-center">
+                    <CheckCircleIcon class="h-5 w-5 text-green-500 mr-2" />
+                    <p class="text-green-800 font-medium">นำเทมเพลตมาใช้เรียบร้อยแล้ว</p>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-gray-500 italic">ไม่มีข้อมูลเพิ่มเติม</div>
+            </div>
             <!-- ปิดแทค-->
           </div>
         </div>
@@ -2166,6 +2307,7 @@ import {
   PencilSquareIcon,
   PencilIcon,
   PlusIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/vue/24/solid'
 
 import Swal from 'sweetalert2'
@@ -2186,6 +2328,7 @@ export default {
     PencilSquareIcon,
     PencilIcon,
     PlusIcon,
+    ExclamationTriangleIcon,
   },
   data() {
     return {
@@ -2227,6 +2370,10 @@ export default {
         { value: 'CREATE_JOB', label: 'เพิ่มงาน' },
         { value: 'UPDATE_JOB', label: 'แก้ไขงาน' },
         { value: 'DELETE_JOB', label: 'ลบงาน' },
+        { value: 'CREATE_ITEM_TEMPLATE', label: 'สร้างเทมเพลต' },
+        { value: 'UPDATE_ITEM_TEMPLATE', label: 'แก้ไขเทมเพลต' },
+        { value: 'DELETE_ITEM_TEMPLATE', label: 'ลบเทมเพลต' },
+        { value: 'APPLY_TEMPLATE', label: 'นำเทมเพลตมาใช้' },
       ],
     }
   },
@@ -2382,6 +2529,10 @@ export default {
         DELETE_JOB_ITEM: 'ลบอุปกรณ์ออกจากงาน',
         CHECKOUT: 'เบิกอุปกรณ์',
         CHECKIN: 'คืนอุปกรณ์',
+        CREATE_ITEM_TEMPLATE: 'สร้างเทมเพลต',
+        UPDATE_ITEM_TEMPLATE: 'แก้ไขเทมเพลต',
+        DELETE_ITEM_TEMPLATE: 'ลบเทมเพลต',
+        APPLY_TEMPLATE: 'นำเทมเพลตมาใช้',
       }
 
       return actionMap[action] || action
@@ -2416,6 +2567,10 @@ export default {
         DELETE_JOB_ITEM: 'bg-red-100 text-red-800',
         CHECKOUT: 'bg-indigo-100 text-indigo-800',
         CHECKIN: 'bg-pink-100 text-pink-800',
+        CREATE_ITEM_TEMPLATE: 'bg-blue-100 text-blue-800',
+        UPDATE_ITEM_TEMPLATE: 'bg-purple-100 text-purple-800',
+        DELETE_ITEM_TEMPLATE: 'bg-red-100 text-red-800',
+        APPLY_TEMPLATE: 'bg-green-100 text-green-800',
       }
 
       return classMap[action] || 'bg-gray-100 text-gray-800'
@@ -2449,6 +2604,7 @@ export default {
         Checkin: 'คืนอุปกรณ์',
         Checkout: 'เบิกอุปกรณ์',
         JobItem: 'อุปกรณ์ในงาน',
+        ItemTemplate: 'เทมเพลต',
       }
 
       return targetTypeMap[targetType] || targetType

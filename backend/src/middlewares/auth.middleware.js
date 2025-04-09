@@ -17,3 +17,11 @@ export const verifyToken = (req, res, next) => {
         return res.status(401).json({ error: 'Unauthorized: Invalid token' })
     }
 }
+
+export const isAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'ADMIN') {
+        next();
+    } else {
+        res.status(403).json({ error: 'ไม่มีสิทธิ์เข้าถึงฟังก์ชันนี้ เฉพาะผู้ดูแลระบบเท่านั้น' });
+    }
+};

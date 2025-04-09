@@ -81,6 +81,7 @@ import {
   ArrowLeftStartOnRectangleIcon,
   ClockIcon,
   HomeIcon,
+  DocumentDuplicateIcon,
 } from '@heroicons/vue/24/outline'
 
 export default {
@@ -94,6 +95,7 @@ export default {
     ArrowLeftStartOnRectangleIcon,
     ClockIcon,
     HomeIcon,
+    DocumentDuplicateIcon,
   },
   props: {
     collapsed: {
@@ -134,6 +136,15 @@ export default {
             'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-pink-400 transition',
           action: () => {
             this.$router.push('/jobs')
+          },
+        },
+        {
+          name: 'จัดการเทมเพลต',
+          icon: DocumentDuplicateIcon,
+          class:
+            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-pink-400 transition',
+          action: () => {
+            this.$router.push('/templates')
           },
         },
         {

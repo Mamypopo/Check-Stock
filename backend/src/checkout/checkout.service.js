@@ -1,9 +1,5 @@
 import prisma from '../config/database.js';
 import { logAction } from '../utils/logger.js';
-import {
-    sendLineGroupMessage,
-    createCheckoutNotificationMessage,
-} from '../external/lineMessaging.js';
 
 export const createCheckout = async (jobId, items, userId) => {
     const job = await prisma.job.findUnique({
@@ -91,19 +87,6 @@ export const createCheckout = async (jobId, items, userId) => {
                 }))
             }
         });
-
-        try {
-            const notificationMessage = createCheckoutNotificationMessage(
-                checkout,
-                job,
-                user || { name: 'ไม่ระบุ' },
-                checkout.items
-            );
-
-            await sendLineGroupMessage(process.env.LINE_GROUP_ID, notificationMessage);
-        } catch (error) {
-            console.error('Failed to send LINE notification:', error);
-        }
 
         return checkout;
     });

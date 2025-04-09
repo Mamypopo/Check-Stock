@@ -4,8 +4,8 @@ export const getItems = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
-        const items = await itemService.getAllItems(page, limit);
-        res.json(items);
+        const result = await itemService.getAllItems(page, limit);
+        res.json(result);
     } catch (err) {
         console.error('Get items error:', err);
         res.status(500).json({ error: 'Failed to fetch items' });
@@ -160,8 +160,8 @@ export const searchItems = async (req, res) => {
         const isConsumable = req.query.isConsumable !== undefined ?
             req.query.isConsumable === 'true' : undefined;
 
-        const items = await itemService.searchItems(query, categoryId, isConsumable, page, limit);
-        res.json(items);
+        const result = await itemService.searchItems(query, categoryId, isConsumable, page, limit);
+        res.json(result);
     } catch (err) {
         console.error('Search items error:', err);
         res.status(500).json({ error: 'Failed to search items' });

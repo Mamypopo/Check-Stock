@@ -14,4 +14,8 @@ export const updateJobItem = (id, data) => {
 
 export const deleteJobItem = (id) => {
     return api.delete(`/job-items/${id}`);
+};
+
+export const addItemsFromTemplate = (data) => {
+    return api.post('/job-items/from-template', data);
 }; 

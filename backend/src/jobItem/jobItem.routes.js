@@ -8,5 +8,6 @@ router.get('/jobs/:jobId/items', verifyToken, jobItemController.getJobItems);
 router.post('/job-items', verifyToken, jobItemController.addJobItem);
 router.put('/job-items/:id', verifyToken, jobItemController.updateJobItem);
 router.delete('/job-items/:id', verifyToken, jobItemController.deleteJobItem);
+router.post('/job-items/from-template', verifyToken, jobItemController.addItemsFromTemplate);
 
 export default router; 

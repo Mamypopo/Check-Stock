@@ -12,6 +12,7 @@ import checkoutRoutes from './checkout/checkout.routes.js'
 import checkinRoutes from './checkin/checkin.routes.js'
 import logRoutes from './log/log.routes.js'
 import webhookRoutes from './external/webhook.routes.js'
+import itemTemplateRoutes from './itemTemplate/itemTemplate.routes.js';
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use('/api', checkoutRoutes);
 app.use('/api', checkinRoutes);
 app.use('/api/logs', logRoutes)
 app.use('/api/webhook', webhookRoutes);
+app.use('/api', itemTemplateRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

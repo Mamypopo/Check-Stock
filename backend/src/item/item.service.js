@@ -3,7 +3,12 @@ import { logAction } from '../utils/logger.js'
 
 export const getAllItems = async (page = 1, limit = 10) => {
     const skip = (page - 1) * limit;
-    return await prisma.item.findMany({
+
+    const totalItems = await prisma.item.count({
+        where: { isDelete: false }
+    });
+
+    const items = await prisma.item.findMany({
         where: { isDelete: false },
         orderBy: { createdAt: 'desc' },
         skip: skip,
@@ -27,7 +32,14 @@ export const getAllItems = async (page = 1, limit = 10) => {
             checkouts: true,
             checkins: true,
         }
-    })
+    });
+
+    return {
+        items,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+        currentPage: page
+    };
 }
 
 export const createItem = async (data, userId) => {
@@ -423,7 +435,9 @@ export const searchItems = async (query = '', categoryId, isConsumable, page = 1
         ...(isConsumable !== undefined ? { isConsumable } : {}),
     };
 
-    return await prisma.item.findMany({
+    const totalItems = await prisma.item.count({ where });
+
+    const items = await prisma.item.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         skip,
@@ -448,6 +462,13 @@ export const searchItems = async (query = '', categoryId, isConsumable, page = 1
             checkins: true,
         }
     });
+
+    return {
+        items,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+        currentPage: page
+    };
 };
 
 export const searchItemsForDropdown = async (query) => {

@@ -21,7 +21,7 @@
 
         <!-- รหัสสินค้า -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">รหัสสินค้า</label>
+          <label class="block text-sm font-medium text-gray-700">รหัสสิ่งของ</label>
           <input
             v-model="localForm.code"
             type="text"
@@ -143,7 +143,7 @@
             class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md flex items-center"
           >
             <CheckIcon class="h-5 w-5 mr-1" />
-            {{ isEditMode ? 'บันทึกการเปลี่ยนแปลง' : 'เพิ่มสินค้า' }}
+            {{ isEditMode ? 'บันทึกการเปลี่ยนแปลง' : 'เพิ่มสิ่งของ' }}
           </button>
         </div>
       </form>

@@ -182,7 +182,7 @@
       <div class="flex items-center gap-2">
         <label for="jobsPerPage" class="text-sm whitespace-nowrap">แสดง:</label>
         <select
-          class="rounded-md text-sm py-1 px-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+          class="rounded-md text-sm py-1 px-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 outline-none"
           id="jobsPerPage"
           v-model="jobsPerPage"
           @change="loadJobs"

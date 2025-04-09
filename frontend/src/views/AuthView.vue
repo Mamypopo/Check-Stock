@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-md bg-white rounded-xl shadow p-6">
+  <div class="w-full max-w-md bg-white rounded-xl shadow p-6 m-4">
     <div class="flex justify-center mb-4">
       <button
         class="px-4 py-2 font-medium"

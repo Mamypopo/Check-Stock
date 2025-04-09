@@ -33,7 +33,7 @@
           class="px-4 py-1.5 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition flex items-center"
         >
           <PlusIcon class="h-5 w-5 mr-1" />
-          เพิ่มสินค้าใหม่
+          เพิ่มสิ่งของใหม่
         </button>
 
         <button
@@ -44,6 +44,13 @@
           จัดการหมวดหมู่และหน่วยนับ
         </button>
       </div>
+    </div>
+
+    <!-- แสดงจำนวนรายการทั้งหมด -->
+    <div class="mb-4 text-gray-600">
+      <p>
+        จำนวนสิ่งของทั้งหมด: <span class="font-medium">{{ totalItems || 0 }}</span> รายการ
+      </p>
     </div>
 
     <!-- ค้นหา -->
@@ -103,7 +110,7 @@
         <tbody>
           <tr v-for="item in items" :key="item.id" class="border-t hover:bg-gray-50">
             <td class="px-4 py-2 whitespace-nowrap">{{ item.code || '-' }}</td>
-            <td class="px-4 py-2">{{ item.name }}</td>
+            <td class="px-4 py-2 whitespace-nowrap">{{ item.name }}</td>
             <td class="px-4 py-2 whitespace-nowrap">{{ item.category?.name }}</td>
             <td class="px-4 py-2 truncate max-w-[180px]">{{ item.description || '-' }}</td>
             <td class="px-4 py-2 whitespace-nowrap">
@@ -149,17 +156,25 @@
         <select
           id="itemsPerPage"
           v-model="itemsPerPage"
-          @change="loadItems"
-          class="rounded-md text-sm py-1 px-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+          @change="changeItemsPerPage"
+          class="rounded-md text-sm py-1 px-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 outline-none"
         >
           <option v-for="option in [10, 20, 50, 100]" :key="option" :value="option">
             {{ option }}
           </option>
         </select>
+        <span class="text-sm text-gray-600">จาก {{ totalItems || 0 }} รายการ</span>
       </div>
 
       <!-- Pagination -->
       <div class="flex items-center gap-2 text-sm">
+        <button
+          class="bg-gray-500 px-2 py-1 rounded-md text-white flex items-center disabled:opacity-50"
+          @click="goToPage(1)"
+          :disabled="currentPage === 1"
+        >
+          <ChevronDoubleLeftIcon class="h-4 w-4" />
+        </button>
         <button
           class="bg-gray-500 px-3 py-1 rounded-md text-white flex items-center disabled:opacity-50"
           @click="prevPage"
@@ -168,14 +183,21 @@
           <ChevronLeftIcon class="h-4 w-4 mr-1" />
           ก่อนหน้า
         </button>
-        <span class="whitespace-nowrap">หน้า {{ currentPage }}</span>
+        <span class="whitespace-nowrap">หน้า {{ currentPage }} จาก {{ totalPages || 1 }}</span>
         <button
           class="bg-gray-500 px-3 py-1 rounded-md text-white flex items-center disabled:opacity-50"
           @click="nextPage"
-          :disabled="!hasMoreItems"
+          :disabled="currentPage >= totalPages"
         >
           ถัดไป
           <ChevronRightIcon class="h-4 w-4 ml-1" />
+        </button>
+        <button
+          class="bg-gray-500 px-2 py-1 rounded-md text-white flex items-center disabled:opacity-50"
+          @click="goToPage(totalPages)"
+          :disabled="currentPage >= totalPages"
+        >
+          <ChevronDoubleRightIcon class="h-4 w-4" />
         </button>
       </div>
     </div>
@@ -217,6 +239,8 @@ import {
   TrashIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/vue/24/outline'
 
@@ -233,6 +257,8 @@ export default {
     TrashIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
+    ChevronDoubleLeftIcon,
+    ChevronDoubleRightIcon,
     MagnifyingGlassIcon,
   },
   data() {
@@ -243,7 +269,8 @@ export default {
       selectedFile: null,
       currentPage: 1,
       itemsPerPage: 10,
-      hasMoreItems: true,
+      totalItems: 0,
+      totalPages: 1,
       showModal: false,
       isEditMode: false,
       form: {
@@ -266,8 +293,10 @@ export default {
     async loadItems() {
       try {
         const res = await fetchItems(this.currentPage, this.itemsPerPage)
-        this.items = res.data
-        this.hasMoreItems = res.data.length === this.itemsPerPage
+        this.items = res.data.items
+        this.totalItems = res.data.totalItems
+        this.totalPages = res.data.totalPages
+        this.currentPage = res.data.currentPage
       } catch (err) {
         console.error('Load items error:', err)
         Swal.fire({
@@ -604,8 +633,10 @@ export default {
         }
 
         const res = await searchItems(params)
-        this.items = res.data
-        this.hasMoreItems = res.data.length === this.itemsPerPage
+        this.items = res.data.items
+        this.totalItems = res.data.totalItems
+        this.totalPages = res.data.totalPages
+        this.currentPage = res.data.currentPage
       } catch (err) {
         console.error('Search error:', err)
         Swal.fire({
@@ -620,6 +651,25 @@ export default {
         })
       }
     },
+    changeItemsPerPage() {
+      this.currentPage = 1
+
+      if (this.searchQuery || this.categoryFilter || this.typeFilter) {
+        this.searchItems()
+      } else {
+        this.loadItems()
+      }
+    },
+    goToPage(page) {
+      if (page < 1 || page > this.totalPages) return
+      this.currentPage = page
+
+      if (this.searchQuery || this.categoryFilter || this.typeFilter) {
+        this.searchItems()
+      } else {
+        this.loadItems()
+      }
+    },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--
@@ -631,7 +681,7 @@ export default {
       }
     },
     nextPage() {
-      if (this.hasMoreItems) {
+      if (this.currentPage < this.totalPages) {
         this.currentPage++
         if (this.searchQuery || this.categoryFilter || this.typeFilter) {
           this.searchItems()

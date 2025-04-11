@@ -45,12 +45,12 @@
       </div>
 
       <div class="overflow-x-auto bg-white rounded shadow">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <table class="min-w-full divide-y divide-gray-200 text-sm table-fixed">
           <thead class="bg-gray-50 text-gray-700 text-left">
             <tr>
-              <th class="px-6 py-3">ชื่อหน่วย</th>
-              <th class="px-6 py-3">สร้างเมื่อ</th>
-              <th class="px-6 py-3 text-center">การจัดการ</th>
+              <th class="px-6 py-3 w-1/3">ชื่อหน่วย</th>
+              <th class="px-6 py-3 w-1/3">สร้างเมื่อ</th>
+              <th class="px-6 py-3 w-1/3 text-center">การจัดการ</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
@@ -149,12 +149,12 @@
       </div>
 
       <div class="overflow-x-auto bg-white rounded shadow">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <table class="min-w-full divide-y divide-gray-200 text-sm table-fixed">
           <thead class="bg-gray-50 text-gray-700 text-left">
             <tr>
-              <th class="px-6 py-3">ชื่อหมวดหมู่</th>
-              <th class="px-6 py-3">สร้างเมื่อ</th>
-              <th class="px-6 py-3 text-center">การจัดการ</th>
+              <th class="px-6 py-3 w-1/3">ชื่อหมวดหมู่</th>
+              <th class="px-6 py-3 w-1/3">สร้างเมื่อ</th>
+              <th class="px-6 py-3 w-1/3 text-center">การจัดการ</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">

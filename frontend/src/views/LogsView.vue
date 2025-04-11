@@ -1217,16 +1217,6 @@
                   </div>
 
                   <div
-                    v-if="getLogDetails.createdBy"
-                    class="bg-white p-3 rounded-md border border-gray-200"
-                  >
-                    <p class="text-sm font-medium text-gray-500 mb-2">สร้างโดย</p>
-                    <p class="text-gray-800">
-                      {{ getLogDetails.createdBy.replace('สร้างโดย ', '').replace(/"/g, '') }}
-                    </p>
-                  </div>
-
-                  <div
                     v-if="getLogDetails.note"
                     class="bg-white p-3 rounded-md border border-gray-200"
                   >

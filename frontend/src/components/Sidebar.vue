@@ -115,7 +115,7 @@ export default {
           name: 'Items',
           icon: ArchiveBoxIcon,
           class:
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-pink-400 transition',
+            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-emerald-300 transition',
           action: () => {
             this.$router.push('/items')
           },
@@ -124,7 +124,7 @@ export default {
           name: 'จัดการหมวดหมู่/หน่วยนับ',
           icon: ListBulletIcon,
           class:
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-pink-400 transition',
+            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-emerald-300 transition',
           action: () => {
             this.$router.push('/category-unit-management')
           },
@@ -133,7 +133,7 @@ export default {
           name: 'จัดการงาน',
           icon: MapIcon,
           class:
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-pink-400 transition',
+            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-emerald-300 transition',
           action: () => {
             this.$router.push('/jobs')
           },
@@ -142,7 +142,7 @@ export default {
           name: 'จัดการเทมเพลต',
           icon: DocumentDuplicateIcon,
           class:
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-pink-400 transition',
+            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-emerald-300 transition',
           action: () => {
             this.$router.push('/templates')
           },
@@ -151,7 +151,7 @@ export default {
           name: 'บันทึกการทำงาน',
           icon: ClockIcon,
           class:
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-pink-400 transition',
+            'w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-300 text-gray-900 font-medium hover:bg-emerald-300 transition',
           action: () => {
             this.$router.push('/logs')
           },
